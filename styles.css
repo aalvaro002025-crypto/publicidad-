@@ -136,10 +136,11 @@ select {
 
 .contact-item {
     background: #f8f9fa;
-    padding: 20px;
+    padding: 25px;
     border-radius: 12px;
     border: 2px solid #e9ecef;
     transition: all 0.3s ease;
+    text-align: center;
 }
 
 .contact-item:hover {
@@ -150,41 +151,50 @@ select {
 
 .whatsapp-info {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     gap: 15px;
 }
 
 .whatsapp-logo {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     flex-shrink: 0;
 }
 
 .contact-details h3 {
     color: #333;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 600;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
 }
 
 .contact-details p {
     color: #666;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 1.4;
+    margin-bottom: 5px;
+}
+
+.company-name {
+    color: #667eea !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
 }
 
 .whatsapp-btn {
     display: inline-block;
     background: #25D366;
     color: white;
-    padding: 12px 20px;
+    padding: 15px 30px;
     border-radius: 8px;
     text-decoration: none;
     font-weight: 600;
     transition: all 0.3s ease;
     text-align: center;
     width: 100%;
+    max-width: 250px;
 }
 
 .whatsapp-btn:hover {
@@ -240,18 +250,12 @@ select {
         font-size: 14px;
     }
     
-    .whatsapp-info {
-        flex-direction: column;
-        text-align: center;
-        gap: 10px;
-    }
-    
     .contact-details h3 {
-        font-size: 16px;
+        font-size: 18px;
     }
     
     .contact-details p {
-        font-size: 13px;
+        font-size: 14px;
     }
 }
 
@@ -280,12 +284,11 @@ select {
 .form-group:nth-child(1) { animation-delay: 0.1s; }
 .form-group:nth-child(2) { animation-delay: 0.2s; }
 .form-group:nth-child(3) { animation-delay: 0.3s; }
-.submit-btn { animation-delay: 0.4s; }
+.form-group:nth-child(4) { animation-delay: 0.4s; }
+.submit-btn { animation-delay: 0.5s; }
 
 .contact-item {
     animation: fadeInUp 0.6s ease-out;
     animation-fill-mode: both;
+    animation-delay: 0.2s;
 }
-
-.contact-item:nth-child(1) { animation-delay: 0.2s; }
-.contact-item:nth-child(2) { animation-delay: 0.4s; }

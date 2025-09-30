@@ -30,6 +30,13 @@
                         <option value="nicaragua">Nicaragua</option>
                     </select>
                 </div>
+
+                <div class="form-group" id="companiaGroup" style="display: none;">
+                    <label for="compania">Compañía de Préstamos:</label>
+                    <select id="compania" name="compania" required>
+                        <option value="">Selecciona una compañía</option>
+                    </select>
+                </div>
                 
                 <button type="submit" class="submit-btn">Enviar</button>
             </form>
@@ -39,31 +46,19 @@
         <div class="contacts-container" id="contactsContainer" style="display: none;">
             <div class="contacts-content">
                 <h2>¡Gracias <span id="userName"></span>!</h2>
-                <p class="welcome-message">Aquí tienes los números de contacto para <span id="selectedCountry"></span>:</p>
+                <p class="welcome-message">Contacta con <span id="selectedCompany"></span> en <span id="selectedCountry"></span>:</p>
                 
                 <div class="contact-numbers">
                     <div class="contact-item">
                         <div class="whatsapp-info">
                             <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="whatsapp-logo">
                             <div class="contact-details">
-                                <h3 id="phone1"></h3>
-                                <p id="description1"></p>
+                                <h3 id="contactName"></h3>
+                                <p id="phoneNumber"></p>
+                                <p class="company-name" id="companyName"></p>
                             </div>
                         </div>
-                        <a href="#" id="whatsappLink1" class="whatsapp-btn" target="_blank">
-                            Contactar por WhatsApp
-                        </a>
-                    </div>
-
-                    <div class="contact-item">
-                        <div class="whatsapp-info">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="whatsapp-logo">
-                            <div class="contact-details">
-                                <h3 id="phone2"></h3>
-                                <p id="description2"></p>
-                            </div>
-                        </div>
-                        <a href="#" id="whatsappLink2" class="whatsapp-btn" target="_blank">
+                        <a href="#" id="whatsappLink" class="whatsapp-btn" target="_blank">
                             Contactar por WhatsApp
                         </a>
                     </div>
@@ -75,54 +70,104 @@
     </div>
 
     <script>
-        // Datos de contacto por país
-        const contactData = {
-            guatemala: {
-                country: "Guatemala",
-                contacts: [
-                    {
-                        phone: "+502 1234-5678",
-                        whatsappNumber: "50212345678",
-                        description: "Atención al cliente y consultas generales"
-                    },
-                    {
-                        phone: "+502 8765-4321",
-                        whatsappNumber: "50287654321",
-                        description: "Soporte técnico y servicios especializados"
-                    }
-                ]
-            },
-            honduras: {
-                country: "Honduras",
-                contacts: [
-                    {
-                        phone: "+504 2345-6789",
-                        whatsappNumber: "50423456789",
-                        description: "Atención al cliente y consultas generales"
-                    },
-                    {
-                        phone: "+504 9876-5432",
-                        whatsappNumber: "50498765432",
-                        description: "Soporte técnico y servicios especializados"
-                    }
-                ]
-            },
-            nicaragua: {
-                country: "Nicaragua",
-                contacts: [
-                    {
-                        phone: "+505 3456-7890",
-                        whatsappNumber: "50534567890",
-                        description: "Atención al cliente y consultas generales"
-                    },
-                    {
-                        phone: "+505 0987-6543",
-                        whatsappNumber: "50509876543",
-                        description: "Soporte técnico y servicios especializados"
-                    }
-                ]
-            }
+        // Empresas y contactos por país
+        const companiesByCountry = {
+            guatemala: [
+                { 
+                    value: "credifinancial", 
+                    name: "Credifinancial",
+                    contact: "Representante",
+                    phone: "+502 1234-5678",
+                    whatsapp: "50212345678"
+                },
+                { 
+                    value: "prestamos-eficaz", 
+                    name: "PRESTAMOS EFICAZ GUATEMALA",
+                    contact: "Representante",
+                    phone: "+502 8765-4321",
+                    whatsapp: "50287654321"
+                }
+            ],
+            honduras: [
+                { 
+                    value: "credialianza-hn", 
+                    name: "CrediAlianza",
+                    contact: "Representante",
+                    phone: "+504 8735-2739",
+                    whatsapp: "50487352739"
+                },
+                { 
+                    value: "crediavanza", 
+                    name: "CrediAvanza",
+                    contact: "Representante",
+                    phone: "+504 9876-5432",
+                    whatsapp: "50498765432"
+                },
+                { 
+                    value: "banca-confiable", 
+                    name: "Banca confiable Honduras",
+                    contact: "Representante",
+                    phone: "+504 1111-2222",
+                    whatsapp: "50411112222"
+                }
+            ],
+            nicaragua: [
+                { 
+                    value: "credialianza-ni", 
+                    name: "CrediAlianza",
+                    contact: "Karen",
+                    phone: "+505 7643 7606",
+                    whatsapp: "50576437606"
+                },
+                { 
+                    value: "banca-credit-nicaragua", 
+                    name: "Banca credit Nicaragua",
+                    contact: "Karla",
+                    phone: "+50586145741",
+                    whatsapp: "50586145741"
+                },
+                { 
+                    value: "confianza-financiera", 
+                    name: "CONFIANZA FINANCIERA",
+                    contact: "Samara",
+                    phone: "+505 8117 0232",
+                    whatsapp: "50581170232"
+                },
+                { 
+                    value: "instacredit", 
+                    name: "INSTACREDIT",
+                    contact: "Alejandra Nicaragua",
+                    phone: "+50587183907",
+                    whatsapp: "50587183907"
+                }
+            ]
         };
+
+        // Evento para cuando cambia el país
+        document.getElementById('pais').addEventListener('change', function() {
+            const selectedCountry = this.value;
+            const companiaSelect = document.getElementById('compania');
+            const companiaGroup = document.getElementById('companiaGroup');
+            
+            // Limpiar opciones anteriores
+            companiaSelect.innerHTML = '<option value="">Selecciona una compañía</option>';
+            
+            if (selectedCountry && companiesByCountry[selectedCountry]) {
+                // Mostrar el campo de compañía
+                companiaGroup.style.display = 'block';
+                
+                // Agregar las empresas del país seleccionado
+                companiesByCountry[selectedCountry].forEach(company => {
+                    const option = document.createElement('option');
+                    option.value = company.value;
+                    option.textContent = company.name;
+                    companiaSelect.appendChild(option);
+                });
+            } else {
+                // Ocultar el campo de compañía si no hay país seleccionado
+                companiaGroup.style.display = 'none';
+            }
+        });
 
         document.getElementById('registrationForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -130,14 +175,18 @@
             const nombre = document.getElementById('nombre').value;
             const edad = document.getElementById('edad').value;
             const pais = document.getElementById('pais').value;
+            const compania = document.getElementById('compania').value;
             
-            if (nombre && edad && pais) {
-                showContacts(nombre, pais);
+            if (nombre && edad && pais && compania) {
+                showContacts(nombre, pais, compania);
             }
         });
 
-        function showContacts(nombre, pais) {
-            const data = contactData[pais];
+        function showContacts(nombre, pais, compania) {
+            // Encontrar la compañía seleccionada
+            const selectedCompany = companiesByCountry[pais].find(c => c.value === compania);
+            
+            if (!selectedCompany) return;
             
             // Ocultar formulario
             document.querySelector('.form-container').style.display = 'none';
@@ -147,22 +196,30 @@
             
             // Llenar información
             document.getElementById('userName').textContent = nombre;
-            document.getElementById('selectedCountry').textContent = data.country;
-            
-            // Primer contacto
-            document.getElementById('phone1').textContent = data.contacts[0].phone;
-            document.getElementById('description1').textContent = data.contacts[0].description;
-            document.getElementById('whatsappLink1').href = `https://wa.me/${data.contacts[0].whatsappNumber}`;
-            
-            // Segundo contacto
-            document.getElementById('phone2').textContent = data.contacts[1].phone;
-            document.getElementById('description2').textContent = data.contacts[1].description;
-            document.getElementById('whatsappLink2').href = `https://wa.me/${data.contacts[1].whatsappNumber}`;
+            document.getElementById('selectedCountry').textContent = getCountryName(pais);
+            document.getElementById('selectedCompany').textContent = selectedCompany.name;
+            document.getElementById('contactName').textContent = selectedCompany.contact;
+            document.getElementById('phoneNumber').textContent = selectedCompany.phone;
+            document.getElementById('companyName').textContent = selectedCompany.name;
+            document.getElementById('whatsappLink').href = `https://wa.me/${selectedCompany.whatsapp}`;
+        }
+
+        function getCountryName(countryCode) {
+            const countries = {
+                'guatemala': 'Guatemala',
+                'honduras': 'Honduras',
+                'nicaragua': 'Nicaragua'
+            };
+            return countries[countryCode] || countryCode;
         }
 
         function goBack() {
             document.getElementById('contactsContainer').style.display = 'none';
             document.querySelector('.form-container').style.display = 'block';
+            
+            // Resetear el formulario
+            document.getElementById('registrationForm').reset();
+            document.getElementById('companiaGroup').style.display = 'none';
         }
     </script>
 </body>
