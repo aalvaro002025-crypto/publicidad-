@@ -9,8 +9,12 @@
 <body>
     <div class="container">
         <div class="form-container">
+            <div class="brand">
+                <img src="logo/b6466380-f726-4294-acca-5fbe2815b2d5.jpeg" alt="Logo" class="brand-logo">
+            </div>
             <h1>Formulario de Registro</h1>
             <form class="registration-form" id="registrationForm">
+                <p class="privacy-note">Usamos tu nombre y edad solo para atenderte por Telegram. No solicitamos contraseñas ni datos financieros.</p>
                 <div class="form-group">
                     <label for="nombre">Nombre:</label>
                     <input type="text" id="nombre" name="nombre" required>
@@ -18,24 +22,8 @@
                 
                 <div class="form-group">
                     <label for="edad">Edad:</label>
-                    <input type="number" id="edad" name="edad" min="1" max="120" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="pais">País:</label>
-                    <select id="pais" name="pais" required>
-                        <option value="">Selecciona tu país</option>
-                        <option value="guatemala">Guatemala</option>
-                        <option value="honduras">Honduras</option>
-                        <option value="nicaragua">Nicaragua</option>
-                    </select>
-                </div>
-
-                <div class="form-group" id="companiaGroup" style="display: none;">
-                    <label for="compania">Compañía de Préstamos:</label>
-                    <select id="compania" name="compania" required>
-                        <option value="">Selecciona una compañía</option>
-                    </select>
+                    <input type="number" id="edad" name="edad" min="18" max="120" required>
+                    <p id="ageError" class="form-error">Debes ser mayor de 18 años para continuar.</p>
                 </div>
                 
                 <button type="submit" class="submit-btn">Enviar</button>
@@ -46,20 +34,18 @@
         <div class="contacts-container" id="contactsContainer" style="display: none;">
             <div class="contacts-content">
                 <h2>¡Gracias <span id="userName"></span>!</h2>
-                <p class="welcome-message">Contacta con <span id="selectedCompany"></span> en <span id="selectedCountry"></span>:</p>
-                
+                <p class="welcome-message">Contacta por Telegram:</p>
                 <div class="contact-numbers">
                     <div class="contact-item">
-                        <div class="whatsapp-info">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="whatsapp-logo">
+                        <div class="telegram-info">
+                            <img src="logo/telegrama.png" alt="Telegram" class="telegram-logo">
                             <div class="contact-details">
-                                <h3 id="contactName"></h3>
-                                <p id="phoneNumber"></p>
-                                <p class="company-name" id="companyName"></p>
+                                <h3 id="contactName">Atención</h3>
+                                <p id="phoneNumber">+505 8613-9476</p>
                             </div>
                         </div>
-                        <a href="#" id="whatsappLink" class="whatsapp-btn" target="_blank">
-                            Contactar por WhatsApp
+                        <a href="https://t.me/+50586139476" id="telegramLink" class="telegram-btn" target="_blank" rel="noopener noreferrer">
+                            Contactar por Telegram
                         </a>
                     </div>
                 </div>
@@ -70,143 +56,44 @@
     </div>
 
     <script>
-        // Empresas y contactos por país
-        const companiesByCountry = {
-            guatemala: [
-                { 
-                    value: "prestamos-eficaz", 
-                    name: "PRESTAMOS EFICAZ GUATEMALA",
-                    phone: "+502 4111-9854",
-                    whatsapp: "50241119854"
-                }
-            ],
-            honduras: [
-                { 
-                    value: "credifinancial-hn", 
-                    name: "Credifinancial",
-                    phone: "+504 8735-2739",
-                    whatsapp: "50487352739"
-                },
-                { 
-                    value: "Banca confiable Honduras", 
-                    name: "Banca Confiable Honduras",
-                    phone: "+504 93683235",
-                    whatsapp: "50493683235"
-                },
-               
-            ],
-            nicaragua: [
-             
-                { 
-                    value: "credialianza-ni", 
-                    name: "CrediAlianza",
-                    phone: "+505 7643-7606",
-                    whatsapp: "50576437606"
-                },
-                { 
-                    value: "banca-credit-nicaragua", 
-                    name: "Banca credit Nicaragua",
-                    phone: "+50586145741",
-                    whatsapp: "50586145741"
-                },
-                { 
-                    value: "confianza-financiera", 
-                    name: "CONFIANZA FINANCIERA",
-                    phone: "+505 8117-0232",
-                    whatsapp: "50581170232"
-                },
-                { 
-                    value: "instacredit", 
-                    name: "INSTACREDIT",
-                    phone: "+50587183907",
-                    whatsapp: "50587183907"
-                },
-                {
-                    value: "CrediAvanza", 
-                    name: "CrediAvanza",
-                    phone: "+505 57067730",
-                    whatsapp: "50557067730"
-                },
-            ]
-        };
+        // Número único de Telegram
+        const TELEGRAM_NUMBER = "+505 8613-9476";
+        const TELEGRAM_PHONE = "50586139476"; // para el enlace
 
-        // Evento para cuando cambia el país
-        document.getElementById('pais').addEventListener('change', function() {
-            const selectedCountry = this.value;
-            const companiaSelect = document.getElementById('compania');
-            const companiaGroup = document.getElementById('companiaGroup');
-            
-            // Limpiar opciones anteriores
-            companiaSelect.innerHTML = '<option value="">Selecciona una compañía</option>';
-            
-            if (selectedCountry && companiesByCountry[selectedCountry]) {
-                // Mostrar el campo de compañía
-                companiaGroup.style.display = 'block';
-                
-                // Agregar las empresas del país seleccionado
-                companiesByCountry[selectedCountry].forEach(company => {
-                    const option = document.createElement('option');
-                    option.value = company.value;
-                    option.textContent = company.name;
-                    companiaSelect.appendChild(option);
-                });
-            } else {
-                // Ocultar el campo de compañía si no hay país seleccionado
-                companiaGroup.style.display = 'none';
-            }
-        });
-
+        // Enviar: solo valida nombre y edad
         document.getElementById('registrationForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
             const nombre = document.getElementById('nombre').value;
             const edad = document.getElementById('edad').value;
-            const pais = document.getElementById('pais').value;
-            const compania = document.getElementById('compania').value;
-            
-            if (nombre && edad && pais && compania) {
-                showContacts(nombre, pais, compania);
+            const ageErrorEl = document.getElementById('ageError');
+
+            // Oculta cualquier error previo
+            ageErrorEl.style.display = 'none';
+
+            const ageNum = parseInt(edad, 10);
+            if (Number.isNaN(ageNum) || ageNum < 18) {
+                // Bloquea avance si es menor de 18
+                ageErrorEl.style.display = 'block';
+                return;
+            }
+
+            if (nombre) {
+                showContacts(nombre);
             }
         });
 
-        function showContacts(nombre, pais, compania) {
-            // Encontrar la compañía seleccionada
-            const selectedCompany = companiesByCountry[pais].find(c => c.value === compania);
-            
-            if (!selectedCompany) return;
-            
-            // Ocultar formulario
+        function showContacts(nombre) {
             document.querySelector('.form-container').style.display = 'none';
-            
-            // Mostrar sección de contactos
             document.getElementById('contactsContainer').style.display = 'block';
-            
-            // Llenar información
             document.getElementById('userName').textContent = nombre;
-            document.getElementById('selectedCountry').textContent = getCountryName(pais);
-            document.getElementById('selectedCompany').textContent = selectedCompany.name;
-            document.getElementById('contactName').textContent = selectedCompany.contact;
-            document.getElementById('phoneNumber').textContent = selectedCompany.phone;
-            document.getElementById('companyName').textContent = selectedCompany.name;
-            document.getElementById('whatsappLink').href = `https://wa.me/${selectedCompany.whatsapp}`;
-        }
-
-        function getCountryName(countryCode) {
-            const countries = {
-                'guatemala': 'Guatemala',
-                'honduras': 'Honduras',
-                'nicaragua': 'Nicaragua'
-            };
-            return countries[countryCode] || countryCode;
+            document.getElementById('phoneNumber').textContent = TELEGRAM_NUMBER;
+            document.getElementById('telegramLink').href = `https://t.me/+${TELEGRAM_PHONE}`;
         }
 
         function goBack() {
             document.getElementById('contactsContainer').style.display = 'none';
             document.querySelector('.form-container').style.display = 'block';
-            
-            // Resetear el formulario
             document.getElementById('registrationForm').reset();
-            document.getElementById('companiaGroup').style.display = 'none';
         }
     </script>
 </body>

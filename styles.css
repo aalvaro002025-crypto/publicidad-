@@ -6,7 +6,12 @@
 
 body {
     font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background:
+      radial-gradient(1200px circle at 10% 10%, rgba(255, 213, 79, 0.25) 0%, rgba(255, 213, 79, 0) 60%),
+      radial-gradient(900px circle at 85% 20%, rgba(126, 255, 173, 0.25) 0%, rgba(126, 255, 173, 0) 60%),
+      radial-gradient(1000px circle at 20% 90%, rgba(147, 197, 253, 0.25) 0%, rgba(147, 197, 253, 0) 60%),
+      linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+    background-attachment: fixed;
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -25,6 +30,25 @@ body {
     border-radius: 15px;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(10px);
+}
+
+/* Logo del formulario */
+.brand {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.brand-logo {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 18px;
+    padding: 6px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 3px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
 }
 
 h1 {
@@ -149,7 +173,7 @@ select {
     box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
 }
 
-.whatsapp-info {
+.telegram-info {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -157,7 +181,7 @@ select {
     gap: 15px;
 }
 
-.whatsapp-logo {
+.telegram-logo {
     width: 50px;
     height: 50px;
     flex-shrink: 0;
@@ -183,9 +207,9 @@ select {
     font-size: 14px !important;
 }
 
-.whatsapp-btn {
+.telegram-btn {
     display: inline-block;
-    background: #25D366;
+    background: #2AABEE;
     color: white;
     padding: 15px 30px;
     border-radius: 8px;
@@ -195,12 +219,51 @@ select {
     text-align: center;
     width: 100%;
     max-width: 250px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 8px 20px rgba(42, 171, 238, 0.25);
 }
 
-.whatsapp-btn:hover {
-    background: #128C7E;
+.telegram-btn:hover {
+    background: #229ED9;
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3);
+    box-shadow: 0 8px 20px rgba(34, 158, 217, 0.35);
+}
+
+/* Estilos para Telegram */
+.telegram-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 15px;
+}
+
+.telegram-logo {
+    width: 50px;
+    height: 50px;
+    flex-shrink: 0;
+}
+
+.telegram-btn {
+    display: inline-block;
+    background: #2AABEE; /* Telegram blue */
+    color: white;
+    padding: 15px 30px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-align: center;
+    width: 100%;
+    max-width: 250px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 8px 20px rgba(42, 171, 238, 0.25);
+}
+
+.telegram-btn:hover {
+    background: #229ED9;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(34, 158, 217, 0.35);
 }
 
 .back-btn {
@@ -291,4 +354,13 @@ select {
     animation: fadeInUp 0.6s ease-out;
     animation-fill-mode: both;
     animation-delay: 0.2s;
+}
+
+/* Mensaje de error de validación */
+.form-error {
+    display: none;
+    color: #e74c3c;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 8px;
 }
