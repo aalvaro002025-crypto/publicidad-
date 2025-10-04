@@ -73,6 +73,7 @@ label {
 
 input[type="text"],
 input[type="number"],
+input[type="tel"],
 select {
     width: 100%;
     padding: 12px 15px;
@@ -85,6 +86,7 @@ select {
 
 input[type="text"]:focus,
 input[type="number"]:focus,
+input[type="tel"]:focus,
 select:focus {
     outline: none;
     border-color: #667eea;
@@ -288,6 +290,26 @@ select {
 }
 
 /* Responsive design */
+/* Vista previa del logo por ciudad */
+.city-logo-preview {
+    display: none;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 12px;
+    margin-top: 8px;
+    align-items: center;
+    justify-items: center;
+}
+
+.city-logo {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    border-radius: 12px;
+    background: #fff;
+    border: 2px solid #e9ecef;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
 @media (max-width: 600px) {
     .form-container,
     .contacts-container {
@@ -302,6 +324,7 @@ select {
     
     input[type="text"],
     input[type="number"],
+    input[type="tel"],
     select {
         padding: 10px 12px;
         font-size: 14px;
@@ -320,6 +343,8 @@ select {
     .contact-details p {
         font-size: 14px;
     }
+
+    .city-logo { width: 90px; height: 90px; }
 }
 
 /* Animaciones */

@@ -9,10 +9,7 @@
 <body>
     <div class="container">
         <div class="form-container">
-            <div class="brand">
-                <img src="logo/b6466380-f726-4294-acca-5fbe2815b2d5.jpeg" alt="Logo" class="brand-logo">
-            </div>
-            <h1>Formulario de Registro</h1>
+            <h1>Formulario de Contacto</h1>
             <form class="registration-form" id="registrationForm">
                 <p class="privacy-note">Usamos tu nombre y edad solo para atenderte por Telegram. No solicitamos contraseñas ni datos financieros.</p>
                 <div class="form-group">
@@ -25,6 +22,23 @@
                     <input type="number" id="edad" name="edad" min="18" max="120" required>
                     <p id="ageError" class="form-error">Debes ser mayor de 18 años para continuar.</p>
                 </div>
+
+                <div class="form-group">
+                    <label for="telefono">Teléfono:</label>
+                    <input type="tel" id="telefono" name="telefono" inputmode="tel" pattern="[0-9\+\-\s]{7,15}" placeholder="+505 8613-9476" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="pais">País:</label>
+                    <select id="pais" name="pais" required>
+                        <option value="">Selecciona tu país</option>
+                        <option value="honduras">Honduras</option>
+                        <option value="nicaragua">Nicaragua</option>
+                        <option value="guatemala">Guatemala</option>
+                    </select>
+                </div>
+
+                <div id="countryLogoPreview" class="city-logo-preview" style="display: none;"></div>
                 
                 <button type="submit" class="submit-btn">Enviar</button>
             </form>
@@ -60,20 +74,52 @@
         const TELEGRAM_NUMBER = "+505 8613-9476";
         const TELEGRAM_PHONE = "50586139476"; // para el enlace
 
+        const COUNTRY_LOGOS_MAP = {
+            honduras: ['logo/1.jpeg','logo/2.jpeg','logo/3.jpeg','logo/4.jpeg','logo/5.jpeg'],
+            nicaragua: ['logo/6.jpeg'],
+            guatemala: ['logo/7.jpeg']
+        };
+
+        const paisSelect = document.getElementById('pais');
+        const countryLogoPreview = document.getElementById('countryLogoPreview');
+
+        paisSelect.addEventListener('change', function () {
+            const val = this.value;
+            countryLogoPreview.innerHTML = '';
+            const logos = COUNTRY_LOGOS_MAP[val];
+            if (Array.isArray(logos) && logos.length) {
+                logos.forEach(src => {
+                    const img = document.createElement('img');
+                    img.src = src;
+                    img.alt = `Logo ${val}`;
+                    img.className = 'city-logo';
+                    countryLogoPreview.appendChild(img);
+                });
+                countryLogoPreview.style.display = 'grid';
+            } else {
+                countryLogoPreview.style.display = 'none';
+            }
+        });
+
         // Enviar: solo valida nombre y edad
         document.getElementById('registrationForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const nombre = document.getElementById('nombre').value;
+            const nombre = document.getElementById('nombre').value.trim();
             const edad = document.getElementById('edad').value;
+            const telefono = document.getElementById('telefono').value.trim();
+            const pais = document.getElementById('pais').value;
             const ageErrorEl = document.getElementById('ageError');
 
-            // Oculta cualquier error previo
             ageErrorEl.style.display = 'none';
 
             const ageNum = parseInt(edad, 10);
             if (Number.isNaN(ageNum) || ageNum < 18) {
                 // Bloquea avance si es menor de 18
                 ageErrorEl.style.display = 'block';
+                return;
+            }
+
+            if (!telefono || !pais) {
                 return;
             }
 
