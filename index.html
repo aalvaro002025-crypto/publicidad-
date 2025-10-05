@@ -3,29 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulario de Registro</title>
+    <title>Formulario de Contacto</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <div class="form-container">
             <h1>Formulario de Contacto</h1>
+            <p class="form-description">Complete el formulario para registrar su información</p>
+            
             <form class="registration-form" id="registrationForm">
-                <p class="privacy-note">Usamos tu nombre y edad solo para atenderte por Telegram. No solicitamos contraseñas ni datos financieros.</p>
                 <div class="form-group">
-                    <label for="nombre">Nombre:</label>
+                    <label for="nombre">Nombre completo:</label>
                     <input type="text" id="nombre" name="nombre" required>
+                    <span class="error-message" id="nombreError"></span>
                 </div>
                 
                 <div class="form-group">
                     <label for="edad">Edad:</label>
                     <input type="number" id="edad" name="edad" min="18" max="120" required>
-                    <p id="ageError" class="form-error">Debes ser mayor de 18 años para continuar.</p>
+                    <span class="error-message" id="edadError"></span>
                 </div>
 
                 <div class="form-group">
                     <label for="telefono">Teléfono:</label>
-                    <input type="tel" id="telefono" name="telefono" inputmode="tel" pattern="[0-9\+\-\s]{7,15}" placeholder="+505 8613-9476" required>
+                    <input type="tel" id="telefono" name="telefono" placeholder="+505 8613-9476" required>
+                    <span class="error-message" id="telefonoError"></span>
                 </div>
 
                 <div class="form-group">
@@ -36,110 +39,251 @@
                         <option value="nicaragua">Nicaragua</option>
                         <option value="guatemala">Guatemala</option>
                     </select>
+                    <span class="error-message" id="paisError"></span>
                 </div>
 
-                <div id="countryLogoPreview" class="city-logo-preview" style="display: none;"></div>
+                <div id="countryLogoPreview" class="country-logo-preview"></div>
                 
-                <button type="submit" class="submit-btn">Enviar</button>
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <span class="btn-text">Enviar</span>
+                    <span class="btn-loader" style="display: none;">Enviando...</span>
+                </button>
             </form>
-        </div>
 
-        <!-- Sección de contactos que aparecerá después del envío -->
-        <div class="contacts-container" id="contactsContainer" style="display: none;">
-            <div class="contacts-content">
-                <h2>¡Gracias <span id="userName"></span>!</h2>
-                <p class="welcome-message">Contacta por Telegram:</p>
-                <div class="contact-numbers">
-                    <div class="contact-item">
-                        <div class="telegram-info">
-                            <img src="logo/telegrama.png" alt="Telegram" class="telegram-logo">
-                            <div class="contact-details">
-                                <h3 id="contactName">Atención</h3>
-                                <p id="phoneNumber">+505 8613-9476</p>
-                            </div>
-                        </div>
-                        <a href="https://t.me/+50586139476" id="telegramLink" class="telegram-btn" target="_blank" rel="noopener noreferrer">
-                            Contactar por Telegram
-                        </a>
-                    </div>
-                </div>
+            <!-- Mensaje de éxito -->
+            <div class="success-message" id="successMessage" style="display: none;">
+                <div class="success-icon">✓</div>
+                <h2>¡Registro exitoso!</h2>
+                <p>Sus datos han sido guardados correctamente.</p>
+                <button class="new-form-btn" onclick="resetForm()">Nuevo registro</button>
+            </div>
 
-                <button class="back-btn" onclick="goBack()">Volver al formulario</button>
+            <!-- Mensaje de error -->
+            <div class="error-container" id="errorContainer" style="display: none;">
+                <div class="error-icon">⚠</div>
+                <h3>Error al enviar</h3>
+                <p id="errorMessage"></p>
+                <button class="retry-btn" onclick="hideError()">Intentar de nuevo</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Número único de Telegram
-        const TELEGRAM_NUMBER = "+505 8613-9476";
-        const TELEGRAM_PHONE = "50586139476"; // para el enlace
-
-        const COUNTRY_LOGOS_MAP = {
-            honduras: ['logo/1.jpeg','logo/2.jpeg','logo/3.jpeg','logo/4.jpeg','logo/5.jpeg'],
-            nicaragua: ['logo/6.jpeg'],
-            guatemala: ['logo/7.jpeg']
+        const API_BASE_URL = 'http://localhost:8000/api';
+        
+        const COMPANY_LOGOS_MAP = {
+            honduras: [
+                { name: 'Empresa A Honduras', logo: 'logo/1.jpeg' },
+                { name: 'Empresa B Honduras', logo: 'logo/2.jpeg' },
+                { name: 'Empresa C Honduras', logo: 'logo/3.jpeg' },
+                { name: 'Empresa D Honduras', logo: 'logo/4.jpeg' },
+                { name: 'Empresa E Honduras', logo: 'logo/5.jpeg' }
+            ],
+            nicaragua: [
+                { name: 'Empresa Nicaragua', logo: 'logo/6.jpeg' }
+            ],
+            guatemala: [
+                { name: 'Empresa Guatemala', logo: 'logo/7.jpeg' }
+            ]
         };
 
-        const paisSelect = document.getElementById('pais');
+        let selectedCompany = null;
+
+        // Elementos del DOM
+        const form = document.getElementById('registrationForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.querySelector('.btn-text');
+        const btnLoader = document.querySelector('.btn-loader');
+        const successMessage = document.getElementById('successMessage');
+        const errorContainer = document.getElementById('errorContainer');
         const countryLogoPreview = document.getElementById('countryLogoPreview');
 
-        paisSelect.addEventListener('change', function () {
-            const val = this.value;
+        // Preview de logos por país con selección
+        document.getElementById('pais').addEventListener('change', function() {
+            const selectedCountry = this.value;
             countryLogoPreview.innerHTML = '';
-            const logos = COUNTRY_LOGOS_MAP[val];
-            if (Array.isArray(logos) && logos.length) {
-                logos.forEach(src => {
-                    const img = document.createElement('img');
-                    img.src = src;
-                    img.alt = `Logo ${val}`;
-                    img.className = 'city-logo';
-                    countryLogoPreview.appendChild(img);
+            selectedCompany = null; // Reset selección
+            
+            if (selectedCountry && COMPANY_LOGOS_MAP[selectedCountry]) {
+                const companies = COMPANY_LOGOS_MAP[selectedCountry];
+                
+                companies.forEach((company, index) => {
+                    const companyDiv = document.createElement('div');
+                    companyDiv.className = 'company-option';
+                    companyDiv.innerHTML = `
+                        <img src="${company.logo}" alt="${company.name}" class="company-logo">
+                        <p class="company-name">${company.name}</p>
+                    `;
+                    
+                    companyDiv.addEventListener('click', function() {
+                        // Remover selección previa
+                        document.querySelectorAll('.company-option').forEach(opt => {
+                            opt.classList.remove('selected');
+                        });
+                        
+                        // Seleccionar actual
+                        this.classList.add('selected');
+                        selectedCompany = company.name;
+                    });
+                    
+                    countryLogoPreview.appendChild(companyDiv);
                 });
+                
                 countryLogoPreview.style.display = 'grid';
             } else {
                 countryLogoPreview.style.display = 'none';
             }
         });
 
-        // Enviar: solo valida nombre y edad
-        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+        // Envío del formulario
+        form.addEventListener('submit', async function(e) {
             e.preventDefault();
-            const nombre = document.getElementById('nombre').value.trim();
-            const edad = document.getElementById('edad').value;
-            const telefono = document.getElementById('telefono').value.trim();
-            const pais = document.getElementById('pais').value;
-            const ageErrorEl = document.getElementById('ageError');
+            
+            // Limpiar errores previos
+            clearErrors();
+            
+            // Obtener datos del formulario
+            const formData = {
+                name: document.getElementById('nombre').value.trim(),
+                age: parseInt(document.getElementById('edad').value),
+                phone: document.getElementById('telefono').value.trim(),
+                country: document.getElementById('pais').value,
+                company: selectedCompany // Agregar empresa seleccionada
+            };
 
-            ageErrorEl.style.display = 'none';
-
-            const ageNum = parseInt(edad, 10);
-            if (Number.isNaN(ageNum) || ageNum < 18) {
-                // Bloquea avance si es menor de 18
-                ageErrorEl.style.display = 'block';
+            // Validación frontend
+            if (!validateForm(formData)) {
                 return;
             }
 
-            if (!telefono || !pais) {
-                return;
-            }
+            // Mostrar estado de carga
+            setLoadingState(true);
 
-            if (nombre) {
-                showContacts(nombre);
+            try {
+                const response = await fetch(`${API_BASE_URL}/contact`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showSuccess();
+                } else {
+                    showError(data);
+                }
+            } catch (error) {
+                console.error('Error de conexión:', error);
+                showError({
+                    message: 'Error de conexión. Verifique que el servidor esté funcionando.'
+                });
+            } finally {
+                setLoadingState(false);
             }
         });
 
-        function showContacts(nombre) {
-            document.querySelector('.form-container').style.display = 'none';
-            document.getElementById('contactsContainer').style.display = 'block';
-            document.getElementById('userName').textContent = nombre;
-            document.getElementById('phoneNumber').textContent = TELEGRAM_NUMBER;
-            document.getElementById('telegramLink').href = `https://t.me/+${TELEGRAM_PHONE}`;
+        // Validación del formulario
+        function validateForm(data) {
+            let isValid = true;
+
+            if (!data.name || data.name.length < 2) {
+                showFieldError('nombreError', 'El nombre debe tener al menos 2 caracteres');
+                isValid = false;
+            }
+
+            if (!data.age || data.age < 18 || data.age > 120) {
+                showFieldError('edadError', 'La edad debe estar entre 18 y 120 años');
+                isValid = false;
+            }
+
+            if (!data.phone || data.phone.length < 7) {
+                showFieldError('telefonoError', 'Ingrese un número de teléfono válido');
+                isValid = false;
+            }
+
+            if (!data.country) {
+                showFieldError('paisError', 'Seleccione un país');
+                isValid = false;
+            }
+
+            // Validar que se haya seleccionado una empresa
+            if (data.country && !data.company) {
+                showFieldError('paisError', 'Seleccione una empresa');
+                isValid = false;
+            }
+
+            return isValid;
         }
 
-        function goBack() {
-            document.getElementById('contactsContainer').style.display = 'none';
-            document.querySelector('.form-container').style.display = 'block';
-            document.getElementById('registrationForm').reset();
+        // Mostrar error en campo específico
+        function showFieldError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+
+        // Limpiar todos los errores
+        function clearErrors() {
+            const errorElements = document.querySelectorAll('.error-message');
+            errorElements.forEach(element => {
+                element.style.display = 'none';
+                element.textContent = '';
+            });
+        }
+
+        // Estado de carga
+        function setLoadingState(loading) {
+            if (loading) {
+                submitBtn.disabled = true;
+                btnText.style.display = 'none';
+                btnLoader.style.display = 'inline';
+            } else {
+                submitBtn.disabled = false;
+                btnText.style.display = 'inline';
+                btnLoader.style.display = 'none';
+            }
+        }
+
+        // Mostrar mensaje de éxito
+        function showSuccess() {
+            form.style.display = 'none';
+            successMessage.style.display = 'block';
+            errorContainer.style.display = 'none';
+        }
+
+        // Mostrar error general
+        function showError(errorData) {
+            const errorMessage = document.getElementById('errorMessage');
+            
+            if (errorData.message) {
+                errorMessage.textContent = errorData.message;
+            } else if (errorData.age) {
+                errorMessage.textContent = `Error en edad: ${errorData.age[0]}`;
+            } else if (errorData.country) {
+                errorMessage.textContent = `Error en país: ${errorData.country[0]}`;
+            } else {
+                errorMessage.textContent = 'Error desconocido. Intente de nuevo.';
+            }
+            
+            errorContainer.style.display = 'block';
+        }
+
+        // Ocultar error
+        function hideError() {
+            errorContainer.style.display = 'none';
+        }
+
+        // Resetear formulario
+        function resetForm() {
+            form.reset();
+            form.style.display = 'block';
+            successMessage.style.display = 'none';
+            errorContainer.style.display = 'none';
+            countryLogoPreview.style.display = 'none';
+            clearErrors();
         }
     </script>
 </body>
