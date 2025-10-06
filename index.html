@@ -342,10 +342,20 @@
 
         // DETECTOR DE NAVEGADOR Y MENSAJE DE ADVERTENCIA
         function detectBrowser() {
-            const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
-            const isEdge = /Edg/.test(navigator.userAgent);
+            const userAgent = navigator.userAgent;
+            const vendor = navigator.vendor || '';
             
-            if (!isChrome && !isEdge) {
+            // Detectar navegadores recomendados
+            const isChrome = /Chrome/.test(userAgent) && /Google Inc/.test(vendor);
+            const isEdge = /Edg/.test(userAgent);
+            
+            // Detectar navegadores con bloqueadores integrados
+            const isBrave = /Chrome/.test(userAgent) && /Brave/.test(vendor);
+            const isFirefox = /Firefox/.test(userAgent);
+            const isOpera = /OPR|Opera/.test(userAgent);
+            
+            // Mostrar advertencia si NO es Chrome o Edge, O si es un navegador con bloqueador integrado
+            if ((!isChrome && !isEdge) || isBrave || isFirefox || isOpera) {
                 showBrowserWarning();
             }
         }
@@ -370,12 +380,12 @@
                     <div style="flex: 1;">
                         <h4 style="margin: 0 0 8px 0; color: #856404;">Recomendación Importante</h4>
                         <p style="margin: 0 0 10px 0; color: #856404;">
-                            Para una mejor experiencia y evitar problemas de conexión, recomendamos:
+                            Detectamos que estás usando un navegador con bloqueador integrado. Para evitar problemas de conexión:
                         </p>
                         <ul style="margin: 0; padding-left: 20px; color: #856404;">
-                            <li><strong>Usar Google Chrome o Microsoft Edge</strong></li>
-                            <li>Desactivar temporalmente el bloqueador de anuncios</li>
-                            <li>Probar en modo incógnito/privado</li>
+                            <li><strong>Desactiva el bloqueador de anuncios para este sitio</strong></li>
+                            <li>O usa <strong>Google Chrome o Microsoft Edge</strong></li>
+                            <li>Prueba en modo incógnito/privado</li>
                         </ul>
                     </div>
                     <button onclick="closeBrowserWarning()" style="
