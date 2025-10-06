@@ -25,12 +25,7 @@
                     <span class="error-message" id="edadError"></span>
                 </div>
 
-                <div class="form-group">
-                    <label for="telefono">Teléfono:</label>
-                    <input type="tel" id="telefono" name="telefono" placeholder="+505 8613-9476" required>
-                    <span class="error-message" id="telefonoError"></span>
-                </div>
-
+                <!-- PAÍS PRIMERO -->
                 <div class="form-group">
                     <label for="pais">País:</label>
                     <select id="pais" name="pais" required>
@@ -40,6 +35,16 @@
                         <option value="guatemala">Guatemala</option>
                     </select>
                     <span class="error-message" id="paisError"></span>
+                </div>
+
+                <!-- TELÉFONO SEGUNDO CON CÓDIGO AUTOMÁTICO -->
+                <div class="form-group">
+                    <label for="telefono">Teléfono:</label>
+                    <div class="phone-input-container" style="display: flex; gap: 5px;">
+                        <input type="text" id="countryCode" readonly style="width: 60px; background: #f5f5f5; text-align: center;" placeholder="Código">
+                        <input type="tel" id="telefono" name="telefono" placeholder="8613-9476" required style="flex: 1;">
+                    </div>
+                    <span class="error-message" id="telefonoError"></span>
                 </div>
 
                 <div id="countryLogoPreview" class="country-logo-preview"></div>
@@ -100,6 +105,13 @@
         // Ejecutar al cargar la página
         window.onload = detectBrowser;
         
+        // Códigos de país
+        const COUNTRY_CODES = {
+            honduras: '+504',
+            nicaragua: '+505',
+            guatemala: '+502'
+        };
+        
         const COMPANY_LOGOS_MAP = {
             honduras: [
                 { name: 'Empresa A Honduras', logo: 'logo/1.jpeg' },
@@ -127,9 +139,23 @@
         const errorContainer = document.getElementById('errorContainer');
         const countryLogoPreview = document.getElementById('countryLogoPreview');
 
-        // Preview de logos por país con selección
+        // Actualizar código de país cuando se selecciona el país
         document.getElementById('pais').addEventListener('change', function() {
             const selectedCountry = this.value;
+            const countryCodeInput = document.getElementById('countryCode');
+            
+            if (selectedCountry && COUNTRY_CODES[selectedCountry]) {
+                countryCodeInput.value = COUNTRY_CODES[selectedCountry];
+            } else {
+                countryCodeInput.value = '';
+            }
+            
+            // Mantener la funcionalidad existente de logos
+            updateCountryLogos(selectedCountry);
+        });
+
+        // Preview de logos por país con selección
+        function updateCountryLogos(selectedCountry) {
             countryLogoPreview.innerHTML = '';
             selectedCompany = null; // Reset selección
             
@@ -162,7 +188,7 @@
             } else {
                 countryLogoPreview.style.display = 'none';
             }
-        });
+        }
 
         // Envío del formulario
         form.addEventListener('submit', async function(e) {
@@ -173,11 +199,11 @@
             
             // Obtener datos del formulario
             const formData = {
-                name: document.getElementById('nombre').value.trim(),
+                name: document.getElementById('nombre').value,
                 age: parseInt(document.getElementById('edad').value),
-                phone: document.getElementById('telefono').value.trim(),
+                phone: document.getElementById('countryCode').value + ' ' + document.getElementById('telefono').value, // Combinar código + número
                 country: document.getElementById('pais').value,
-                company: selectedCompany // Agregar empresa seleccionada
+                company: selectedCompany
             };
 
             // Validación frontend
