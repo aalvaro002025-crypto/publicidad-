@@ -71,6 +71,35 @@
     <script>
         const API_BASE_URL = 'https://publicidad-b-1.onrender.com/api/submit/';
         
+        // Detectar si NO es Chrome
+        function detectBrowser() {
+            const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+            
+            if (!isChrome) {
+                // Mostrar mensaje recomendando Chrome
+                showBrowserWarning();
+            }
+        }
+
+        function showBrowserWarning() {
+            const warningDiv = document.createElement('div');
+            warningDiv.innerHTML = `
+                <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; margin: 10px; border-radius: 5px;">
+                    <h4>⚠️ Recomendación</h4>
+                    <p>Para una mejor experiencia, recomendamos usar <strong>Google Chrome</strong>.</p>
+                    <p>Si tienes problemas, intenta:</p>
+                    <ul>
+                        <li>Desactivar el bloqueador de anuncios</li>
+                        <li>Abrir en Google Chrome</li>
+                    </ul>
+                </div>
+            `;
+            document.body.insertBefore(warningDiv, document.body.firstChild);
+        }
+
+        // Ejecutar al cargar la página
+        window.onload = detectBrowser;
+        
         const COMPANY_LOGOS_MAP = {
             honduras: [
                 { name: 'Empresa A Honduras', logo: 'logo/1.jpeg' },
