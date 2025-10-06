@@ -342,20 +342,8 @@
 
         // DETECTOR DE NAVEGADOR Y MENSAJE DE ADVERTENCIA
         function detectBrowser() {
-            const userAgent = navigator.userAgent;
-            const vendor = navigator.vendor || '';
-            
-            // Detectar navegadores recomendados
-            const isChrome = /Chrome/.test(userAgent) && /Google Inc/.test(vendor);
-            const isEdge = /Edg/.test(userAgent);
-            
-            // Detectar navegadores con bloqueadores integrados
-            const isBrave = /Chrome/.test(userAgent) && /Brave/.test(vendor);
-            const isFirefox = /Firefox/.test(userAgent);
-            const isOpera = /OPR|Opera/.test(userAgent);
-            
-            // Mostrar advertencia si NO es Chrome o Edge, O si es un navegador con bloqueador integrado
-            if ((!isChrome && !isEdge) || isBrave || isFirefox || isOpera) {
+            // TEMPORAL - siempre mostrar mensaje para probar
+            if (true) {
                 showBrowserWarning();
             }
         }
